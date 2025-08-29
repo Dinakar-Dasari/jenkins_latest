@@ -46,7 +46,7 @@ pipeline {
               steps{
                 timeout(time: 60, unit: 'SECONDS') {
                     sh '''
-                        withSonarQubeEnv(installationName: 'sonar-server') {
+                        withSonarQubeEnv('sonar-server') {
                             $SONAR_SCANNER_HOME/bin/sonar-scanner 
                             -Dsonar.sources=app.js \
                         }
