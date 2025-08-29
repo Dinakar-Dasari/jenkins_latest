@@ -33,7 +33,7 @@ pipeline {
                    --prettyPrint 
                 ''',
                 odcInstallation: 'owsap-dependency'
-                // dependencyCheckPublisher pattern: 'OWSAP_catalogue.xml'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
 
@@ -42,7 +42,7 @@ pipeline {
     post { 
     always { 
         echo 'I will always say Hello again!'
-        deleteDir() // --> this will delete the files in workspace directory in agent
+       // deleteDir() // --> this will delete the files in workspace directory in agent
     }
     }
 }
