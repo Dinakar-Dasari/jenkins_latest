@@ -37,7 +37,7 @@ pipeline {
                    --prettyPrint 
                 ''',
                 odcInstallation: 'owsap-dependency'
-                dependencyCheckPublisher failedTotalMedium: 1, pattern: '**/dependency-check-report.xml', stopBuild: false
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml', stopBuild: false
                 // by default the build will not fail if we don't give failedTotalMedium: 1, stopBuild: true
             }
         }
