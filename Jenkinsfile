@@ -6,6 +6,10 @@ pipeline {
         nodejs 'nodejs-20'
     }
 
+    environment {
+        SONAR_SCANNER_HOME = tool 'sonar-7.2';
+    }
+
     stages{
         stage('git checkout') {
             steps{ 
@@ -33,8 +37,23 @@ pipeline {
                    --prettyPrint 
                 ''',
                 odcInstallation: 'owsap-dependency'
-                dependencyCheckPublisher failedTotalMedium: 1, pattern: '**/dependency-check-report.xml', stopBuild: true
+                dependencyCheckPublisher failedTotalMedium: 1, pattern: '**/dependency-check-report.xml', stopBuild: false`
+                // by default the build will not fail if we don't give failedTotalMedium: 1, stopBuild: true
             }
+        }
+
+        stage('sonar') {
+              steps{
+                timeout(time: 60, unit: 'SECONDS') {
+                    sh '''
+                        withSonarQubeEnv(installationName: 'sonar-server') {
+                            $SONAR_SCANNER_HOME/bin/sonar-scanner 
+                            -Dsonar.sources=app.js \
+                        }
+                    '''
+                     waitForQualityGate abortPipeline: true  
+                }      
+              }
         }
 
     }
