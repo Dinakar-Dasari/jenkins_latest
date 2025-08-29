@@ -45,12 +45,14 @@ pipeline {
         stage('sonar') {
               steps{
                 timeout(time: 60, unit: 'SECONDS') {
-                    sh '''
                         withSonarQubeEnv('sonar-server') {
+                        sh '''
                             $SONAR_SCANNER_HOME/bin/sonar-scanner 
-                            -Dsonar.sources=app.js \
+                            -Dsonar.sources=server.js
+                            '''
                         }
-                    '''
+
+                        
                      waitForQualityGate abortPipeline: true  
                 }      
               }
