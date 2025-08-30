@@ -47,10 +47,10 @@ pipeline {
                 timeout(time: 60, unit: 'SECONDS') {
                         withSonarQubeEnv('sonar-server') {
                         sh '''
-                            $SONAR_SCANNER_HOME/bin/sonar-scanner 
-                            -Dsonar.projectKey=catalogue \
-                            -Dsonar.sources=. \
-                            '''
+                            $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                                -Dsonar.projectKey=catalogue \
+                                -Dsonar.sources=server.js \
+                        '''
                         }
 
                         
