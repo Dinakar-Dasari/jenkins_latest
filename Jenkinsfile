@@ -49,7 +49,7 @@ pipeline {
                         sh '''
                             $SONAR_SCANNER_HOME/bin/sonar-scanner 
                             -Dsonar.projectKey=catalogue \
-                            -Dsonar.sources=server.js
+                            -Dsonar.sources=. \
                             '''
                         }
 
