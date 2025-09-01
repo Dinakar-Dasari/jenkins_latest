@@ -29,7 +29,7 @@ pipeline {
 
         stage('git checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Dinakar-Dasari/Jenkins_catalogue.git'
+                git branch: 'main', url: 'https://github.com/Dinakar-Dasari/jenkins_latest.git'
             }
         }
 
