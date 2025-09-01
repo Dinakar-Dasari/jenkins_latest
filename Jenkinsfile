@@ -31,11 +31,14 @@ pipeline {
 /// Can skip git checkout as it will clone already when we use the URL in the UI
 
         stage('get app version') {
-                def packageJson = readJSON file: 'package.json'
-                appVersion = packageJson.version
-                echo "Package version: ${appVersion}"
-        }
-
+            steps{
+                script{
+                    def packageJson = readJSON file: 'package.json'
+                    appVersion = packageJson.version
+                    echo "Package version: ${appVersion}"
+                }    
+            }
+        }  
         stage('install dependencies') {
             steps{
                 sh 'npm install'
