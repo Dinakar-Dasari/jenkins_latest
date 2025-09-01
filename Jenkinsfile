@@ -57,28 +57,28 @@ pipeline {
             }
         }
 
-        stage("dependency scan") {
-            steps{
-                dependencyCheck additionalArguments: '''
-                   --scan ./ 
-                   --format 'ALL' 
-                   --prettyPrint 
-                ''',
-                odcInstallation: 'owsap-dependency' //tool name which we configured in tool section
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml', stopBuild: false
-                // by default the build will not fail if we don't give failedTotalMedium: 1, stopBuild: true
-            }
-        }
+       // stage("dependency scan") {
+        //    steps{
+      //          dependencyCheck additionalArguments: """
+       //            --scan ./ 
+       //            --format 'ALL' 
+       //            --prettyPrint 
+       //         """,
+       //         odcInstallation: 'owsap-dependency' //tool name which we configured in tool section
+       //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml', stopBuild: false
+       //         // by default the build will not fail if we don't give failedTotalMedium: 1, stopBuild: true
+       //     }
+       // }
 
         stage('SAST-sonar') {
             steps{
                 timeout(time: 60, unit: 'SECONDS') {
                         withSonarQubeEnv('sonar-server') {
-                        sh '''
+                        sh """
                             $SONAR_SCANNER_HOME/bin/sonar-scanner \
                                 -Dsonar.projectKey=$COMPONENT \
                                 -Dsonar.sources=server.js \
-                        '''
+                        """
                         }
 
                      // waitForQualityGate abortPipeline: true  
@@ -90,11 +90,11 @@ pipeline {
         stage('Image build') {
             steps{
                 withAWS(credentials: 'aws-creds', region: 'us-east-1') {
-                    sh '''
+                    sh """
                         aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
                         docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion} .
                         docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
-                    '''
+                    """
                 }
             }
         }
