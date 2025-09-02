@@ -105,14 +105,11 @@ pipeline {
 
         stage("Trigger Deploy"){
             when{
-                expression{
-                    params.deploy        
-                }
+                expression{params.deploy }
             }
-
             steps{
                 script{
-                    build job: 'catalogue_cd'
+                    build job: "../${COMPONENT}_cd",
                     parameters: [
                         string(name: 'app_Version', value: "${appVersion}"),
                         string(name: 'deploy_to', value: 'DEV')
