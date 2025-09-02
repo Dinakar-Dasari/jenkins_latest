@@ -15,6 +15,10 @@ pipeline {
         ACC_ID = '127218179061'
     }
 
+    parameters{
+        booleanParam(name: 'deploy', defaultValue: false, description: 'is it good to deploy?')
+    }
+
     options {
         timeout(time:30, unit:'MINUTES')  // pipeline will terminate if exceeds 30 minutes
     }
@@ -57,18 +61,18 @@ pipeline {
             }
         }
 
-       // stage("dependency scan") {
-        //    steps{
-      //          dependencyCheck additionalArguments: """
-       //            --scan ./ 
-       //            --format 'ALL' 
-       //            --prettyPrint 
-       //         """,
-       //         odcInstallation: 'owsap-dependency' //tool name which we configured in tool section
-       //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml', stopBuild: false
-       //         // by default the build will not fail if we don't give failedTotalMedium: 1, stopBuild: true
-       //     }
-       // }
+      /*  stage("dependency scan") {
+            steps{
+                dependencyCheck additionalArguments: """
+                   --scan ./ 
+                   --format 'ALL' 
+                   --prettyPrint 
+                """,
+                odcInstallation: 'owsap-dependency' //tool name which we configured in tool section
+                dependencyCheckPublisher pattern: '**\/dependency-check-report.xml', stopBuild: false
+                // by default the build will not fail if we don't give failedTotalMedium: 1, stopBuild: true
+            }
+        } 
 
         stage('SAST-sonar') {
             steps{
@@ -85,7 +89,7 @@ pipeline {
                      // pipeline will fail because there is no code coverage. So, to continue we are disabling it
                 }      
             }
-        }
+        } */
 
         stage('Image build') {
             steps{
@@ -99,12 +103,31 @@ pipeline {
             }
         }
 
+        stage("Trigger Deploy"){
+            when{
+                expression{
+                    params.deploy        
+                }
+            }
+
+            steps{
+                build job: 'catalogue_cd'
+                parameters: [
+                    string(name: 'app_Version', value: "${appVersion}"),
+                    string(name: 'deploy_to', value: 'DEV')
+                ],
+                propagate: false, //even catalogue_cd fails, it doesn't effect this build
+                wait: false  // This build won't wait and continue for later stages 
+            }
+        }
+        
+
     }
 
     post { 
-    always { 
-        echo 'I will always say Hello again!'
-       // deleteDir() // --> this will delete the files in workspace directory in agent
-    }
+        always { 
+            echo 'I will always say Hello again!'
+        // deleteDir() // --> this will delete the files in workspace directory in agent
+        }
     }
 }
