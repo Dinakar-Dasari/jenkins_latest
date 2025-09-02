@@ -111,13 +111,16 @@ pipeline {
             }
 
             steps{
-                build job: 'catalogue_cd'
-                parameters: [
-                    string(name: 'app_Version', value: "${appVersion}"),
-                    string(name: 'deploy_to', value: 'DEV')
-                ],
-                propagate: false, //even catalogue_cd fails, it doesn't effect this build
-                wait: false  // This build won't wait and continue for later stages 
+                script{
+                    build job: 'catalogue_cd'
+                    parameters: [
+                        string(name: 'app_Version', value: "${appVersion}"),
+                        string(name: 'deploy_to', value: 'DEV')
+                    ],
+                    propagate: false, //even catalogue_cd fails, it doesn't effect this build
+                    wait: false  // This build won't wait and continue for later stages      
+                }
+
             }
         }
         
