@@ -109,7 +109,7 @@ pipeline {
             }
             steps{
                 script{
-                    build job: "../${COMPONENT}_cd",
+                    build job: "${COMPONENT}_cd",
                     parameters: [
                         string(name: 'app_Version', value: "${appVersion}"),
                         string(name: 'deploy_to', value: 'DEV')
