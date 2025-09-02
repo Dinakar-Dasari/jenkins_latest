@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         appVersion=''
-        SONAR_SCANNER_HOME = tool 'sonar-7.2';
+       // SONAR_SCANNER_HOME = tool 'sonar-7.2';
         PROJECT = 'roboshop'
         COMPONENT = 'catalogue'
         REGION = 'us-east-1'
