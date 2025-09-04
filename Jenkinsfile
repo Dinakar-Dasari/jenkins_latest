@@ -112,12 +112,14 @@ pipeline {
         stage('Trivy scan'){
             steps {
                 sh  """ 
-                    trivy image sdd070/$COMPONENT:$appVersion \
+                    trivy image dd070/$COMPONENT:$appVersion \
                         --severity LOW,MEDIUM,HIGH \
                         --exit-code 0 \
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json  
+
                 // This will fetch the results in json format
+
                     trivy image dd070/$COMPONENT:$appVersion \
                         --severity CRITICAL \
                         --exit-code 1 \
