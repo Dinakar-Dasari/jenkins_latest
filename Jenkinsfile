@@ -118,8 +118,6 @@ pipeline {
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json  
 
-                // This will fetch the results in json format
-
                     trivy image dd070/$COMPONENT:$appVersion \
                         --severity CRITICAL \
                         --exit-code 1 \
