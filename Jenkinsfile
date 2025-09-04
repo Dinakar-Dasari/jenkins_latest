@@ -91,7 +91,7 @@ pipeline {
             }
         } */
 
-        stage('Image build') {
+       /* stage('Image build') {
             steps{
                 withAWS(credentials: 'aws-creds', region: 'us-east-1') {
                     sh """
@@ -101,7 +101,64 @@ pipeline {
                     """
                 }
             }
+        } */
+
+        stage('image build'){
+            steps {
+                sh " docker build -t dd070/$COMPONENT:$appVersion . "
+            }
+        }    
+
+        stage('Trivy scan'){
+            steps {
+                sh  """ 
+                    trivy image sdd070/$COMPONENT:$appVersion \
+                        --severity LOW,MEDIUM,HIGH \
+                        --exit-code 0 \
+                        --quiet \
+                        --format json -o trivy-image-MEDIUM-results.json  
+                // This will fetch the results in json format
+                    trivy image dd070/$COMPONENT:$appVersion \
+                        --severity CRITICAL \
+                        --exit-code 1 \
+                        --quiet \
+                        --format json -o trivy-image-CRITICAL-results.json
+                """
+            }
+
+            // To convert to html / xml format
+            post {
+                always {
+                    sh '''
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                            --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json 
+
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                            --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            --output trivy-image-MEDIUM-results.xml  trivy-image-MEDIUM-results.json 
+
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json          
+                    '''
+                }
+            }    
+
         }
+
+        stage('Push docker image'){
+            steps {
+                withDockerRegistry(credentialsId: 'ddocker-hub-creds', url: "") {
+                    sh  "docker push dd070/$COMPONENT:$appVersion"
+                } 
+            }
+        }
+
 
         stage("Trigger Deploy"){
             when{
