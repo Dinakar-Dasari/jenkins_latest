@@ -153,7 +153,7 @@ pipeline {
 
         stage('Push docker image'){
             steps {
-                withDockerRegistry(credentialsId: 'ddocker-hub-creds', url: "") {
+                withDockerRegistry(credentialsId: 'docker-hub-creds', url: "") {
                     sh  "docker push dd070/$COMPONENT:$appVersion"
                 } 
             }
